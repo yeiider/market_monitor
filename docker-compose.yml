@@ -16,6 +16,8 @@ services:
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
     volumes:
       - influxdb_data_v2:/var/lib/influxdb2
+    networks:
+      - proxy_network
 
   # Servicio 1: El Recolector (Ingesta y Escritura)
   collector:
@@ -31,6 +33,8 @@ services:
       - INTERVAL_SECONDS=30
     depends_on:
       - influxdb
+    networks:
+      - proxy_network
 
   # Servicio 2: La API (Cálculo y Exposición para venta)
   api:
@@ -46,6 +50,13 @@ services:
       - INFLUX_BUCKET=${INFLUX_BUCKET}
     depends_on:
       - influxdb
+    networks:
+      - proxy_network
 
 volumes:
   influxdb_data_v2:
+
+
+networks:
+  proxy_network:
+    external: true
