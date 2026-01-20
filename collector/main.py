@@ -23,7 +23,7 @@ URL = (
     "&isEtf=false"
     "&isFund=false"
     "&isActivelyTrading=true"
-    "&limit=2000" 
+    "&limit=2000"
 )
 
 def fetch_and_store():
@@ -31,6 +31,7 @@ def fetch_and_store():
     write_api = client.write_api(write_options=SYNCHRONOUS)
     
     print(f"📡 [Collector] Consultando FMP Screener...", flush=True)
+    print(f"📡 [Collector] Consultando FMP API-TOKEN... "+ API_KEY, flush=True)
     try:
         start_time = time.time()
         response = requests.get(URL, timeout=10)
