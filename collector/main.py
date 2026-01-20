@@ -23,7 +23,7 @@ URL = (
     "&isEtf=false"
     "&isFund=false"
     "&isActivelyTrading=true"
-    "&limit=2000"
+    "&limit=4000"
 )
 
 def fetch_and_store():
