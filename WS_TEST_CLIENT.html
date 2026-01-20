@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Monitor Live</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155; }
+        .symbol { font-weight: bold; font-size: 1.2em; color: #38bdf8; }
+        .price { font-size: 1.5em; margin: 10px 0; }
+        .timestamp { font-size: 0.8em; color: #94a3b8; }
+        #status { padding: 10px; background: #be123c; border-radius: 4px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>🦈 Market Monitor Live <span id="status">Disconnected</span></h1>
+    <div id="market-grid" class="grid"></div>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const gridEl = document.getElementById('market-grid');
+        let ws;
+
+        function connect() {
+            ws = new WebSocket('ws://localhost:8000/ws/live-market');
+
+            ws.onopen = () => {
+                statusEl.innerText = 'Online 🟢';
+                statusEl.style.backgroundColor = '#15803d';
+            };
+
+            ws.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'market_update') {
+                    updateGrid(msg.data);
+                }
+            };
+
+            ws.onclose = () => {
+                statusEl.innerText = 'Disconnected 🔴';
+                statusEl.style.backgroundColor = '#be123c';
+                setTimeout(connect, 3000);
+            };
+        }
+
+        function updateGrid(stocks) {
+            gridEl.innerHTML = ''; // Simple redraw, in production distinct update
+            stocks.forEach(stock => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="symbol">${stock.symbol}</div>
+                    <div class="price">$${stock.price}</div>
+                    <div class="timestamp">${new Date(stock.timestamp).toLocaleTimeString()}</div>
+                `;
+                gridEl.appendChild(card);
+            });
+        }
+
+        connect();
+    </script>
+</body>
+</html>
