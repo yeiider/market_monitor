@@ -15,7 +15,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUX_BUCKET}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
     volumes:
-      - influxdb_data:/var/lib/influxdb2
+      - influxdb_data_v2:/var/lib/influxdb2
 
   # Servicio 1: El Recolector (Ingesta y Escritura)
   collector:
@@ -48,4 +48,4 @@ services:
       - influxdb
 
 volumes:
-  influxdb_data:
+  influxdb_data_v2:
