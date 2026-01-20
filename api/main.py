@@ -1,11 +1,21 @@
 import os
 import asyncio
 from fastapi import FastAPI, Query, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from influxdb_client import InfluxDBClient
 from typing import List, Optional
 from pydantic import BaseModel
 
 app = FastAPI(title="Market Monitor Pro API", version="2.1")
+
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite cualquier origen (Frontend en Vercel, Localhost, etc.)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, OPTIONS...)
+    allow_headers=["*"],  # Permite todos los headers
+)
 
 # Config
 INFLUX_URL = os.getenv("INFLUX_URL")
