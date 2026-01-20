@@ -115,14 +115,21 @@ async def startup_event():
 
 @app.websocket("/ws/live-market")
 async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
+    print(f"WS: New connection request from {websocket.client}")
     try:
-        while True:
-            # Mantener conexión viva. El cliente puede enviar "ping" si quiere.
-            # Aquí solo escuchamos, el broadcast se hace desde la tarea de fondo.
-            await websocket.receive_text()
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        await manager.connect(websocket)
+        print("WS: Connection accepted")
+        try:
+            while True:
+                await websocket.receive_text()
+        except WebSocketDisconnect:
+            print("WS: Client disconnected")
+            manager.disconnect(websocket)
+        except Exception as e:
+            print(f"WS: Error inside loop: {e}")
+            manager.disconnect(websocket)
+    except Exception as e:
+        print(f"WS: Handshake/Connect failed: {e}")
 
 # --- Standard Endpoints ---
 
